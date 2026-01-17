@@ -1,0 +1,14 @@
+{
+  "name": "sodiqit-plugins",
+  "owner": {
+    "name": "sodiqit"
+  },
+  "plugins": [
+    {
+      "name": "review-toolkit",
+      "source": "./review-toolkit",
+      "description": "Comprehensive PR review agents specializing in comments, tests, error handling, type design, code quality, and code simplification",
+      "version": "1.0.0"
+    }
+  ]
+}
