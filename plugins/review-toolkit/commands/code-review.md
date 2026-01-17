@@ -27,6 +27,7 @@ Run a comprehensive pull request review using multiple specialized agents, each 
    - **types** - Analyze type design and invariants (if new types added)
    - **code** - General code review for project guidelines
    - **simplify** - Simplify code for clarity and maintainability
+   - **security** - Security vulnerability review (OWASP Top 10, CWE)
    - **all** - Run all applicable reviews (default)
 
 3. **Identify Changed Files**
@@ -50,6 +51,7 @@ Run a comprehensive pull request review using multiple specialized agents, each 
    - **If comments/docs added**: comment-analyzer
    - **If error handling changed**: silent-failure-hunter
    - **If types/dtos added/modified**: type-design-analyzer
+   - **If handling user input/auth/sensitive data**: security-reviewer
    - **After passing review**: code-simplifier (polish and refine)
 
 5. **Launch Review Agents**
@@ -114,6 +116,9 @@ Run a comprehensive pull request review using multiple specialized agents, each 
 
 /review-toolkit:code-review simplify
 # Simplifies code after passing review
+
+/review-toolkit:code-review security
+# Reviews only security vulnerabilities (OWASP Top 10, CWE)
 ```
 
 **Parallel review:**
@@ -166,6 +171,12 @@ Run a comprehensive pull request review using multiple specialized agents, each 
 - Improves clarity and readability
 - Applies project standards
 - Preserves functionality
+
+**security-reviewer**:
+- Identifies OWASP Top 10 vulnerabilities
+- References CWE standards
+- Reviews auth, injection, crypto issues
+- Confidence-based filtering (≥85)
 
 ## Tips:
 
