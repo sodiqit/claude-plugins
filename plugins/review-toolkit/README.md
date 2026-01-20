@@ -4,7 +4,7 @@ A comprehensive collection of specialized agents for thorough pull request revie
 
 ## Overview
 
-This plugin bundles 6 expert review agents that each focus on a specific aspect of code quality. Use them individually for targeted reviews or together for comprehensive PR analysis.
+This plugin bundles 8 expert review agents that each focus on a specific aspect of code quality. Use them individually for targeted reviews or together for comprehensive PR analysis.
 
 ## Agents
 
@@ -137,6 +137,57 @@ This plugin bundles 6 expert review agents that each focus on a specific aspect 
 
 **Note**: This agent preserves functionality while improving code structure and maintainability.
 
+### 7. security-reviewer
+**Focus**: Security vulnerabilities and OWASP Top 10
+
+**Analyzes:**
+- Injection vulnerabilities (SQL, XSS, command)
+- Authentication and authorization issues
+- Cryptographic failures
+- Sensitive data exposure
+- SSRF and path traversal
+
+**When to use:**
+- When handling user input
+- When implementing authentication
+- When working with file operations or APIs
+
+**Triggers:**
+```
+"Review security of this code"
+"Check for vulnerabilities"
+"I added an endpoint that handles user input"
+```
+
+### 8. concurrency-reviewer
+**Focus**: Race conditions and synchronization issues in Node.js
+
+**Analyzes:**
+- Read-modify-write without atomicity
+- TOCTOU (time-of-check time-of-use) vulnerabilities
+- Module-level mutable state in async handlers
+- Non-atomic database operations
+- Async singleton initialization races
+- Cache invalidation races
+
+**Important**: This agent first reads CLAUDE.md and searches for existing concurrency patterns in the codebase to avoid false positives when code follows established project conventions.
+
+**When to use:**
+- When implementing inventory/stock management
+- When adding caching logic
+- When working with file system operations
+- When using shared state across async boundaries
+
+**Triggers:**
+```
+"Check for race conditions"
+"Review the caching implementation"
+"Analyze concurrency issues"
+"I added inventory/stock management"
+```
+
+**Note**: Only reports issues with confidence ≥ 85 and respects project-specific transaction/locking patterns.
+
 ## Usage Patterns
 
 ### Individual Agent Usage
@@ -207,6 +258,10 @@ Agents provide confidence scores for their findings:
 **code-reviewer**: Scores issues 0-100 (91-100 = critical)
 
 **code-simplifier**: Identifies complexity and suggests simplifications
+
+**security-reviewer**: Scores issues 0-100 (85+ = reportable)
+
+**concurrency-reviewer**: Scores issues 0-100 (85+ = reportable), reads project conventions first
 
 ### Output Formats
 
@@ -289,10 +344,12 @@ This plugin works great with:
 **Recommended workflow:**
 1. Write code → **code-reviewer**
 2. Fix issues → **silent-failure-hunter** (if error handling)
-3. Add tests → **pr-test-analyzer**
-4. Document → **comment-analyzer**
-5. Review passes → **code-simplifier** (polish)
-6. Create PR
+3. Check concurrency → **concurrency-reviewer** (if async with shared state)
+4. Check security → **security-reviewer** (if handling user input/auth)
+5. Add tests → **pr-test-analyzer**
+6. Document → **comment-analyzer**
+7. Review passes → **code-simplifier** (polish)
+8. Create PR
 
 ## Contributing
 

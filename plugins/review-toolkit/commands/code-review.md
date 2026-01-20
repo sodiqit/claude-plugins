@@ -1,6 +1,6 @@
 ---
 description: "Comprehensive PR review using specialized agents"
-argument-hint: "[review-aspects] [--range <commit-range>]"
+argument-hint: "[review-aspects] [--range <commit-range>] [--plan <file-path>]"
 allowed-tools: ["Bash", "Glob", "Grep", "Read", "Task"]
 ---
 
@@ -16,8 +16,17 @@ Run a comprehensive pull request review using multiple specialized agents, each 
    - Parse arguments for:
      - Review aspects (comments, tests, errors, types, code, simplify, all)
      - Commit range via `--range` flag (e.g., `--range HEAD~3..HEAD`, `--range main..feature`)
+     - Business context via `--plan` flag (e.g., `--plan ~/.claude/plans/feature.md`)
    - If no `--range` specified: use working tree changes (staged, unstaged, untracked)
+   - If `--plan` specified: Read the file content using the Read tool
    - Default review scope: Run all applicable reviews
+
+   **Plan File Context:**
+   When a plan file is provided, it gives reviewers business context including:
+   - Feature requirements and acceptance criteria
+   - Design decisions and trade-offs
+   - Areas of concern to focus on
+   - Expected behavior changes
 
 2. **Available Review Aspects:**
 
@@ -28,6 +37,7 @@ Run a comprehensive pull request review using multiple specialized agents, each 
    - **code** - General code review for project guidelines
    - **simplify** - Simplify code for clarity and maintainability
    - **security** - Security vulnerability review (OWASP Top 10, CWE)
+   - **concurrency** - Race condition and synchronization analysis (Node.js)
    - **all** - Run all applicable reviews (default)
 
 3. **Identify Changed Files**
@@ -52,9 +62,23 @@ Run a comprehensive pull request review using multiple specialized agents, each 
    - **If error handling changed**: silent-failure-hunter
    - **If types/dtos added/modified**: type-design-analyzer
    - **If handling user input/auth/sensitive data**: security-reviewer
+   - **If async/await with shared state, db operations, caching, fs operations**: concurrency-reviewer
    - **After passing review**: code-simplifier (polish and refine)
 
 5. **Launch Review Agents**
+
+   **When launching each agent, include:**
+   - The git diff or changed files context
+   - **If `--plan` provided**: Include the plan content as business context
+
+   Agent prompt should include (when plan is provided):
+   ```
+   ## Business Context (from plan file)
+   <plan content here>
+
+   ## Changes to Review
+   <diff/files context>
+   ```
 
    **Sequential approach** (one at a time):
    - Easier to understand and act on
@@ -119,6 +143,9 @@ Run a comprehensive pull request review using multiple specialized agents, each 
 
 /review-toolkit:code-review security
 # Reviews only security vulnerabilities (OWASP Top 10, CWE)
+
+/review-toolkit:code-review concurrency
+# Reviews for race conditions and synchronization issues
 ```
 
 **Parallel review:**
@@ -134,9 +161,21 @@ Run a comprehensive pull request review using multiple specialized agents, each 
 
 /review-toolkit:code-review --range main..HEAD
 # Reviews all commits since branching from main
+```
 
-/review-toolkit:code-review tests errors --range origin/main..HEAD
-# Reviews only tests and errors for commits not yet pushed
+**With business context (plan file):**
+```
+/review-toolkit:code-review --plan ~/.claude/plans/auth-feature.md
+# Reviews working tree changes with feature context from plan file
+
+/review-toolkit:code-review tests errors --plan ./docs/feature-spec.md
+# Reviews tests and errors with feature spec as context
+
+/review-toolkit:code-review --range main..HEAD --plan ~/.claude/plans/current.md
+# Reviews commits since main with plan context
+
+/review-toolkit:code-review tests errors --range origin/main..HEAD --plan ./feature.md
+# Reviews tests and errors for unpushed commits with feature context
 ```
 
 ## Agent Descriptions:
@@ -176,6 +215,13 @@ Run a comprehensive pull request review using multiple specialized agents, each 
 - Identifies OWASP Top 10 vulnerabilities
 - References CWE standards
 - Reviews auth, injection, crypto issues
+- Confidence-based filtering (≥85)
+
+**concurrency-reviewer**:
+- Detects race conditions in async code
+- Analyzes TOCTOU vulnerabilities
+- Reviews shared state synchronization
+- Reads project conventions first (CLAUDE.md)
 - Confidence-based filtering (≥85)
 
 ## Tips:
