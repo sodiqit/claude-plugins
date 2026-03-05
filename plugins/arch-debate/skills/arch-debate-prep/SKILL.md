@@ -8,7 +8,7 @@ description: >
   or provides a casual problem description that needs formatting into
   a structured /arch-debate prompt. Converts informal input into
   well-structured debate prompts with BAB framing and constraint calibration.
-version: 1.0.0
+version: 1.1.0
 ---
 
 # Arch-Debate Prep — Informal Input to Structured Prompt

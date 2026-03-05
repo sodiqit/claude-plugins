@@ -13,7 +13,13 @@
     {
       "name": "arch-debate",
       "source": "./arch-debate",
-      "description": "Structured architectural debate using Agent Teams with ACH methodology. Orchestrates competing proposals through research, cross-examination, and synthesis phases.",
+      "description": "Multi-perspective architecture advisory sessions with personalized advisors (Kleppmann, Uncle Bob, Evans). Orchestrates structured debates using ACH methodology.",
+      "version": "1.1.0"
+    },
+    {
+      "name": "rfc",
+      "source": "./rfc",
+      "description": "RFC document generation for architecture review. Interactive interview to gather context, codebase exploration, and structured RFC output using a standardized template.",
       "version": "1.0.0"
     }
   ]

@@ -12,7 +12,7 @@ description: >
   from multiple perspectives. Orchestrates 3 personalized architecture
   advisors (Kleppmann, Uncle Bob, Evans) through a structured debate
   protocol based on Analysis of Competing Hypotheses methodology.
-version: 2.0.0
+version: 1.1.0
 ---
 
 # Multi-Perspective Architecture Advisory via Agent Teams
