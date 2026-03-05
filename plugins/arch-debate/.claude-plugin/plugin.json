@@ -1,0 +1,7 @@
+{
+  "name": "arch-debate",
+  "description": "Structured architectural debate using Agent Teams with ACH methodology. Orchestrates competing proposals through research, cross-examination, and synthesis phases.",
+  "author": {
+    "name": "sodiqit"
+  }
+}
