@@ -7,18 +7,23 @@ description: >
   "evaluate competing solutions", "trade-off analysis",
   "pros and cons of different approaches", "arch-debate",
   "help me decide between approaches", "architecture review",
+  "evaluate my architecture", "assess module boundaries",
   or wants to spawn an Agent Teams session for exploring a problem
-  from multiple angles. Orchestrates 3 teammates through a structured
-  debate protocol based on Analysis of Competing Hypotheses methodology.
-version: 1.0.0
+  from multiple perspectives. Orchestrates 3 personalized architecture
+  advisors (Kleppmann, Uncle Bob, Evans) through a structured debate
+  protocol based on Analysis of Competing Hypotheses methodology.
+version: 2.0.0
 ---
 
-# Structured Architectural Debate via Agent Teams
+# Multi-Perspective Architecture Advisory via Agent Teams
 
-Orchestrate a structured debate via Agent Teams. Two proposers independently develop
-competing solutions; a validator stress-tests both using disconfirmation logic
-(the stronger proposal is the one with the least evidence against it, not the most
-evidence for it).
+Orchestrate a structured architecture advisory session via Agent Teams. Three personalized
+advisors — each with a distinct cognitive framework — independently analyze the problem,
+cross-examine each other's reasoning, and produce a synthesized recommendation.
+
+The advisors challenge each other from their own frameworks (not generically), and the
+lead applies ACH logic: the strongest recommendation is the one with the least disconfirming
+evidence across all three perspectives.
 
 ## Prerequisites
 
@@ -34,8 +39,8 @@ Halt the session until the environment variable is confirmed.
 
 ## Lead Role
 
-The lead acts as **coordinator only**. Never generate solutions. Only delegate,
-moderate, and synthesize. Use delegate mode throughout the session.
+The lead acts as **coordinator only**. Never generate solutions or architectural opinions.
+Only delegate, moderate, and synthesize. Use delegate mode throughout the session.
 
 ## Input Handling
 
@@ -46,22 +51,34 @@ Before spawning the team, gather from the user:
 - **Codebase context** — which files/modules are relevant (read them before spawning)
 
 If the problem statement is vague, ask 1-2 targeted clarifying questions. No more than 2.
-If still unclear after 2 questions, do not spawn the team — ask the user to refine.
+If still unclear after 2 questions, do not spawn the team — suggest `/arch-debate-prep`.
 
-## Team Roles
+## Session Mode
 
-Spawn exactly 3 teammates. Full spawn prompts are in **`references/session-protocol.md`**.
+Determine the mode before spawning. This affects Phase 1 instructions:
 
-| Role | Name | Thinking Style | Focus |
-|------|------|---------------|-------|
-| Proposer Alpha | `alpha` | Conservative, pragmatic | Proven patterns, maintainability, incremental adoption |
-| Proposer Beta | `beta` | Exploratory, unconventional | Novel approaches, long-term scalability, challenging assumptions |
-| Validator | `validator` | Skeptical, systematic, fair | Disconfirming evidence, failure modes, hidden assumptions |
+| Mode | When | Behavior |
+|------|------|----------|
+| Architecture Review | User wants to evaluate existing code/design | All three analyze existing code through their lens, focus on problems and improvements |
+| Module Boundary Design | User asks where to split modules, define responsibilities | Evans leads (bounded contexts), Kleppmann adds data flow constraints, Uncle Bob adds dependency direction |
+| New Solution Design | User needs to design something new | All three propose approaches from their frameworks, then cross-examine |
 
-Key constraint: Alpha and Beta MUST propose fundamentally different approaches, not
-variations of the same idea. If proposals converge, instruct the Validator to flag it. Convergence
-toward the same solution is a valid signal — document why both arrived at the same
-conclusion.
+If unclear, default to Architecture Review for existing code, New Solution Design for new features.
+
+## Advisor Panel
+
+Spawn exactly 3 advisors. Full persona profiles are in **`personas/`**. Spawn prompts are in **`references/session-protocol.md`**.
+
+| Advisor | Name | Cognitive Entry Point | Focus |
+|---------|------|----------------------|-------|
+| Martin Kleppmann | `kleppmann` | Data flow and failure modes | Distributed systems, consistency models, data architecture, operational complexity |
+| Uncle Bob | `uncle-bob` | Dependency direction and structural quality | SOLID, Clean Architecture, testability, the Dependency Rule |
+| Eric Evans | `evans` | Domain model and ubiquitous language | Bounded contexts, aggregates, context maps, conceptual integrity |
+
+Key design: these three enter problems from **fundamentally different cognitive angles**.
+Even on the same problem, Kleppmann asks "where does the data flow?", Uncle Bob asks
+"which way do the dependencies point?", and Evans asks "what does the domain expert call this?".
+This diversity of entry points is the primary mechanism for avoiding Degeneration of Thought.
 
 ## Session Phases
 
@@ -69,40 +86,50 @@ Three core phases + one optional refinement:
 
 | Phase | Mode | What Happens |
 |-------|------|-------------|
-| 1. Research | Parallel | Alpha and Beta independently explore the problem, read codebase, form proposals. No cross-talk. Each produces a structured proposal. |
-| 2. Cross-Examine | Interactive | Validator poses 3-5 disconfirming questions per proposal. Alpha and Beta critique each other: identify the strongest point and weakest assumption. 2 rounds max. |
-| 3. Refine (optional) | Parallel | Only if Validator requests it (low confidence). Each proposer revises addressing strongest criticisms. |
+| 1. Research | Parallel | All three advisors independently explore the problem, read codebase, produce analysis through their framework. No cross-talk. |
+| 2. Cross-Examine | Interactive | Each advisor receives the other two's analyses. They identify strengths and blind spots from their own framework. 2 rounds max. |
+| 3. Refine (optional) | Parallel | Only if lead determines low differentiation. Each advisor revises addressing strongest criticisms. |
 | 4. Synthesize | Lead only | Lead reads everything and produces the synthesis document. |
 
 **Adaptive break rules:**
-- Validator may skip Phase 3 if Phase 2 produced clear differentiation and sufficient evidence.
+- Skip Phase 3 if Phase 2 produced clear differentiation and sufficient evidence.
 - Terminate Cross-Examine early if a point stalls for 2+ exchanges on the same argument.
 - Log stalled points as Open Questions in the synthesis.
 
 For step-by-step orchestration instructions, consult **`references/session-protocol.md`**.
 
-## Structured Proposal Format
+## Structured Analysis Format
 
-Instruct each proposer to output using this structure. Include the format in spawn prompts:
+Instruct each advisor to output using this structure. Include the format in spawn prompts:
 
 ```markdown
-## Proposal: {name}
+## Analysis: {Advisor Name}'s Perspective
 
-### Approach
-{2-3 sentence summary}
+### Framework Applied
+{Which of their core principles/frameworks they used — 1-2 sentences}
 
-### Key Design Decisions
-- Decision 1: {what and why}
+### Key Observations
+- {Observation 1 through their specific lens, with evidence from codebase}
+- {Observation 2 through their specific lens}
+
+### Recommendation
+{Specific, implementable architectural recommendation}
+
+### Design Decisions
+- Decision 1: {what and why, grounded in their framework}
 - Decision 2: {what and why}
 
 ### Implementation Outline
 - {file/module}: {what changes}
 
 ### Assumptions
-- {explicitly stated assumptions the proposal depends on}
+- {explicitly stated assumptions the recommendation depends on}
 
 ### Trade-offs and Risks
-- {honest weaknesses and what could go wrong}
+- {honest weaknesses from their own perspective}
+
+### What I Am Less Certain About
+- {areas outside their primary expertise where they defer to others}
 ```
 
 ## Synthesis Output Format
@@ -110,31 +137,49 @@ Instruct each proposer to output using this structure. Include the format in spa
 Produce this document at the end of Phase 4:
 
 ```markdown
-## Architectural Debate: {problem}
+## Architecture Advisory Session: {problem}
 
 ### Problem Statement
 {1-2 sentences restating the decision}
 
+### Advisors
+- **Martin Kleppmann** — analyzed through: data flows, consistency, failure modes
+- **Uncle Bob** — analyzed through: dependency direction, SOLID, testability
+- **Eric Evans** — analyzed through: domain model, bounded contexts, ubiquitous language
+
 ### Areas of Agreement
-{Points both proposals share — establish common ground first}
+{Points where all three frameworks converge — high-confidence guidance}
 
-### Solution A: {name}
-**Approach**: {summary}
-**Strengths**: {from debate evidence}
-**Risks and disconfirming evidence**: {what undermines this proposal}
+### Perspective: Martin Kleppmann
+**Framework applied**: {which principles}
+**Key insight**: {the most important thing this perspective uniquely revealed}
+**Recommendation**: {summary}
+**Disconfirming evidence**: {what the other frameworks raised against this}
 
-### Solution B: {name}
-**Approach**: {summary}
-**Strengths**: {from debate evidence}
-**Risks and disconfirming evidence**: {what undermines this proposal}
+### Perspective: Uncle Bob
+**Framework applied**: {which principles}
+**Key insight**: {the most important thing this perspective uniquely revealed}
+**Recommendation**: {summary}
+**Disconfirming evidence**: {what the other frameworks raised against this}
+
+### Perspective: Eric Evans
+**Framework applied**: {which principles}
+**Key insight**: {the most important thing this perspective uniquely revealed}
+**Recommendation**: {summary}
+**Disconfirming evidence**: {what the other frameworks raised against this}
 
 ### Key Debate Points
-{3-5 most important arguments from cross-examination}
+{3-5 most important arguments from cross-examination — genuine disagreements and how they resolved}
 
 ### Recommendation
-**Preferred**: {A, B, or hybrid with specific elements}
+**Preferred approach**: {integrated recommendation drawing from the strongest elements}
 **Confidence**: {high | medium | low}
-**Rationale**: {based on which proposal had less disconfirming evidence}
+**Rationale**: {based on ACH: which elements had the least disconfirming evidence across all three frameworks}
+
+### Framework-Specific Checklist
+- [ ] Data flow and consistency requirements met (Kleppmann)
+- [ ] Dependency Rule respected, core testable in isolation (Uncle Bob)
+- [ ] Domain model reflects ubiquitous language, bounded contexts clear (Evans)
 
 ### Open Questions
 {Unresolved concerns needing further investigation}
@@ -147,12 +192,16 @@ Produce this document at the end of Phase 4:
 
 | Risk | Mitigation |
 |------|-----------|
-| Sycophantic collapse (proposer abandons position without reason) | Require explicit evidence citation when changing position |
-| Degeneration of Thought (repetitive arguments, no new insights) | Cap at 2 cross-examination rounds; use opponent feedback, not self-reflection |
-| Echo chamber (both proposers converge on shared bias) | Different personas enforced; Validator flags convergence |
-| Persuasion over truth (eloquent but weak arguments win) | Validator weights evidence quality over rhetoric; structured proposal format |
-| Debate deadlock (same point argued repeatedly) | Lead intervenes after 2 exchanges on same point; log as Open Question |
+| Persona collapse (advisor breaks character, gives generic advice) | Each persona has explicit anti-collapse instructions and behavioral constraints. Lead sends re-engagement prompt referencing specific cognitive entry point. |
+| Degeneration of Thought (all converge to same generic advice) | Different cognitive ENTRY POINTS prevent this — Kleppmann starts with data flow, Uncle Bob with dependencies, Evans with domain language. Even on the same problem, they ask different first questions. |
+| Sycophantic collapse (advisor abandons position without evidence) | Require explicit evidence citation when changing position. Each persona has "concede only with stronger evidence" in their rules. |
+| One advisor dominates (problem clearly in one domain) | Synthesis explicitly requires extracting value from ALL three frameworks. Even when one is most relevant, others surface risks and blind spots. Framework-Specific Checklist ensures all three lenses represented. |
+| Echo chamber (advisors converge on shared bias) | Three fundamentally different frameworks (data flow vs. dependency direction vs. domain model) make unconscious alignment unlikely. If convergence occurs, it is a strong signal — document why all three frameworks agree. |
+| Debate deadlock (same point argued repeatedly) | Lead intervenes after 2 exchanges on same point; log as Open Question. |
 
 ## Additional Resources
 
-- **`references/session-protocol.md`** — Complete spawn prompts for all 3 teammates, step-by-step phase orchestration messages, and edge case handling
+- **`personas/martin-kleppmann.md`** — Full persona profile for Martin Kleppmann
+- **`personas/uncle-bob.md`** — Full persona profile for Uncle Bob (Robert C. Martin)
+- **`personas/eric-evans.md`** — Full persona profile for Eric Evans
+- **`references/session-protocol.md`** — Complete spawn prompts, phase orchestration, and edge case handling

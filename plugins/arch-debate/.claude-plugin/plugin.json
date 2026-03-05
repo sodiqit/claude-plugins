@@ -1,6 +1,6 @@
 {
   "name": "arch-debate",
-  "description": "Structured architectural debate using Agent Teams with ACH methodology. Orchestrates competing proposals through research, cross-examination, and synthesis phases.",
+  "description": "Multi-perspective architecture advisory sessions with personalized advisors (Kleppmann, Uncle Bob, Evans). Orchestrates structured debates using ACH methodology.",
   "author": {
     "name": "sodiqit"
   }

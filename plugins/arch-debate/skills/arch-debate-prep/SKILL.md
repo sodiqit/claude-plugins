@@ -66,6 +66,8 @@ Present the formatted prompt in a fenced code block ready to copy:
 Problem: {Core question framed as decision.
 1-2 sentences of Before/After context explaining why this matters now.}
 
+Mode: {Architecture Review | Module Boundary Design | New Solution Design}
+
 Constraints:
 - {Hard constraint 1}
 - {Hard constraint 2}
@@ -77,8 +79,13 @@ Success criteria:
 Relevant files: {comma-separated confirmed paths}
 ````
 
+**Mode selection guide:**
+- **Architecture Review** — the user wants to evaluate existing code or design ("is this good?", "review this")
+- **Module Boundary Design** — the user asks about splitting, boundaries, responsibilities
+- **New Solution Design** — the user needs to build something new ("how should I design X?")
+
 If solution hints were extracted from the user's input, append them separately
-to prevent anchoring the proposers:
+to prevent anchoring the advisors:
 
 ````markdown
 > Initial thinking (for context, not to anchor proposals):
