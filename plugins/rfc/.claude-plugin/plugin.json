@@ -1,0 +1,7 @@
+{
+  "name": "rfc",
+  "description": "RFC document generation for architecture review. Helps structure problem context, proposed solutions, and implementation details using a standardized template.",
+  "author": {
+    "name": "sodiqit"
+  }
+}
