@@ -30,6 +30,30 @@ Semver:
 
 After bumping: `git commit && git push`. Consumers update with `/plugin marketplace update sodiqit-plugins` then `/reload-plugins`.
 
+### Before committing — verify no drift (MUST run)
+
+A plugin version is duplicated in two files and skills carry their own `version`; these must never drift. Run this gate before every commit — it prints `OK` or lists problems and exits non-zero:
+
+```bash
+python3 - <<'PY'
+import json, glob, re, sys
+bad = []
+mkt = {p['name']: p.get('version') for p in json.load(open('.claude-plugin/marketplace.json'))['plugins']}
+for name, mv in mkt.items():
+    pv = json.load(open(f'plugins/{name}/.claude-plugin/plugin.json')).get('version')
+    if pv != mv:
+        bad.append(f'{name}: plugin.json={pv} != marketplace.json={mv}')
+for f in glob.glob('plugins/**/SKILL.md', recursive=True):
+    parts = open(f).read().split('---')
+    if len(parts) < 3 or not re.search(r'(?m)^version:', parts[1]):
+        bad.append(f'{f}: missing `version` in frontmatter')
+print('\n'.join(bad) + '\nFAIL' if bad else 'OK')
+sys.exit(1 if bad else 0)
+PY
+```
+
+If it prints anything other than `OK`, fix the listed files before committing.
+
 ## Conventions
 
 - Skill content (SKILL.md, instructions, examples) is in English.

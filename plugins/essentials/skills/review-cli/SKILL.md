@@ -1,5 +1,6 @@
 ---
 name: review-cli
+version: 1.0.0
 description: >
   Use this skill whenever the user wants to view or refresh a local mobile
   code review of uncommitted changes — triggers like "review", "обнови

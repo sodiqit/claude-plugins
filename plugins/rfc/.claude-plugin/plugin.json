@@ -1,6 +1,7 @@
 {
   "name": "rfc",
   "description": "RFC document generation for architecture review. Helps structure problem context, proposed solutions, and implementation details using a standardized template.",
+  "version": "1.0.0",
   "author": {
     "name": "sodiqit"
   }
