@@ -12,7 +12,7 @@ description: >
   from multiple perspectives. Orchestrates 3 personalized architecture
   advisors (Kleppmann, Uncle Bob, Evans) through a structured debate
   protocol based on Analysis of Competing Hypotheses methodology.
-version: 1.1.0
+version: 1.1.1
 ---
 
 # Multi-Perspective Architecture Advisory via Agent Teams
@@ -41,6 +41,60 @@ Halt the session until the environment variable is confirmed.
 
 The lead acts as **coordinator only**. Never generate solutions or architectural opinions.
 Only delegate, moderate, and synthesize. Use delegate mode throughout the session.
+
+## Tool Usage — How to Orchestrate
+
+This skill uses **Agent Teams** infrastructure. You MUST use these specific tools — do NOT
+use the regular `Agent` tool without `team_name`, as standalone agents cannot communicate
+with each other (which is required for Phase 2 Cross-Examination).
+
+### Tool mapping
+
+| Action | Tool | Key parameters |
+|--------|------|----------------|
+| Create the team | `TeamCreate` | `team_name: "arch-debate"` |
+| Create tasks for tracking | `TaskCreate` | One task per advisor + one for synthesis |
+| Spawn each advisor | `Agent` | `team_name: "arch-debate"`, `name: "kleppmann"` / `"uncle-bob"` / `"evans"` |
+| Assign tasks to advisors | `TaskUpdate` | `owner: "kleppmann"` etc. |
+| Send cross-exam analyses | `SendMessage` | `type: "message"`, `recipient: "kleppmann"` etc. |
+| Broadcast to all advisors | `SendMessage` | `type: "broadcast"` (use sparingly) |
+| Shut down advisors | `SendMessage` | `type: "shutdown_request"`, `recipient: <name>` |
+| Clean up team | `TeamDelete` | (no params) |
+
+### Step-by-step orchestration
+
+**Before spawning — gather full codebase context.** If the `feature-dev:code-explorer` agent
+is available, use it to deeply explore the relevant modules (trace execution paths, map
+dependencies, understand patterns). Otherwise, read all relevant codebase files yourself.
+You need this context to:
+- Substitute `{file_list}` in advisor prompts with actual file paths
+- Produce the synthesis in Phase 4
+
+**Phase 1 setup:**
+1. `TeamCreate` with `team_name: "arch-debate"`
+2. `TaskCreate` — create 3 tasks: "Kleppmann research", "Uncle Bob research", "Evans research"
+3. Spawn 3 advisors in parallel using `Agent` with these parameters:
+   - `team_name: "arch-debate"`, `name: "kleppmann"`, `prompt: <full prompt from session-protocol.md with substitutions>`
+   - `team_name: "arch-debate"`, `name: "uncle-bob"`, `prompt: <full prompt>`
+   - `team_name: "arch-debate"`, `name: "evans"`, `prompt: <full prompt>`
+4. Each advisor reads codebase, produces structured analysis, and marks their task completed
+5. Wait for all 3 to complete (idle notifications arrive automatically)
+
+**Phase 2 — Cross-Examination:**
+1. Collect all 3 analyses from the advisor messages (they arrive automatically)
+2. Use `SendMessage` (type: "message") to send each advisor the other two's analyses with the cross-examination prompt from `references/session-protocol.md`
+3. Wait for responses, assess convergence/divergence
+4. Optionally run Round 2 if needed
+
+**Phase 3 — Refine (optional, skip if Phase 2 produced clear differentiation):**
+1. Use `SendMessage` to ask each advisor to revise their analysis addressing the strongest criticism
+2. Wait for revised analyses
+
+**Phase 4 — Synthesis:**
+1. Read all analyses and cross-examination responses
+2. Produce the synthesis document yourself (lead role — do not delegate)
+3. Send `shutdown_request` to each advisor
+4. `TeamDelete` to clean up
 
 ## Input Handling
 

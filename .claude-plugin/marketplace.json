@@ -6,20 +6,32 @@
   "plugins": [
     {
       "name": "review-toolkit",
-      "source": "./review-toolkit",
+      "source": "./plugins/review-toolkit",
       "description": "Comprehensive PR review agents specializing in comments, tests, error handling, type design, code quality, and code simplification",
       "version": "1.0.0"
     },
     {
       "name": "arch-debate",
-      "source": "./arch-debate",
+      "source": "./plugins/arch-debate",
       "description": "Multi-perspective architecture advisory sessions with personalized advisors (Kleppmann, Uncle Bob, Evans). Orchestrates structured debates using ACH methodology.",
       "version": "1.1.0"
     },
     {
       "name": "rfc",
-      "source": "./rfc",
+      "source": "./plugins/rfc",
       "description": "RFC document generation for architecture review. Interactive interview to gather context, codebase exploration, and structured RFC output using a standardized template.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "essentials",
+      "source": "./plugins/essentials",
+      "description": "Universal skills for everyday development workflows — planning, decision-making, and critical thinking.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "devops",
+      "source": "./plugins/devops",
+      "description": "DevOps skills for containerization and deployment — Docker expertise for multi-stage builds, image optimization, security hardening, and Compose orchestration.",
       "version": "1.0.0"
     }
   ]

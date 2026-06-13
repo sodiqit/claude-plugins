@@ -1,5 +1,6 @@
 {
   "name": "arch-debate",
+  "version": "1.1.1",
   "description": "Multi-perspective architecture advisory sessions with personalized advisors (Kleppmann, Uncle Bob, Evans). Orchestrates structured debates using ACH methodology.",
   "author": {
     "name": "sodiqit"

@@ -1,0 +1,7 @@
+{
+  "name": "devops",
+  "description": "DevOps skills for containerization and deployment — Docker expertise for multi-stage builds, image optimization, security hardening, and Compose orchestration.",
+  "author": {
+    "name": "sodiqit"
+  }
+}
